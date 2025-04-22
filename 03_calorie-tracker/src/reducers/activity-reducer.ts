@@ -1,17 +1,18 @@
 import { Activity } from "../types";
 
-export type ActivityActions = {
-  type: "save-activity";
-  payload: { newActivity: Activity };
-};
+export type ActivityActions = 
+  { type: "save-activity"; payload: { newActivity: Activity } } |
+  { type: "set-activeId"; payload: { id: Activity['id'] } } 
 
 type ActivityState = {
-  activities: Activity[];
+  activities: Activity[],
+  activeId: Activity['id']
 };
 
 export const initialState: ActivityState = {
   // inicializamos como arreglo vacío
   activities: [],
+  activeId:''
 };
 
 export const activityReducer = (
@@ -30,7 +31,12 @@ export const activityReducer = (
         }
         
     }
-
+    if(action.type === 'set-activeId'){
+      return {
+        ...state,
+        activeId:action.payload.id
+      }
+    }
     // Siempre debemos devolver el state
     return state
 };
