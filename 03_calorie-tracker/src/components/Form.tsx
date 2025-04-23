@@ -1,11 +1,12 @@
-import React, { Dispatch, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 import { v4 as uuidv4} from 'uuid'
 import { categories } from "../data/categories";
 import { Activity } from "../types";
-import { ActivityActions } from "../reducers/activity-reducer";
+import { ActivityActions, ActivityState } from "../reducers/activity-reducer";
 
 type FormProps = {
-  dispatch: Dispatch<ActivityActions>
+  dispatch: Dispatch<ActivityActions>,
+  state : ActivityState
 }
 
 const initialForm : Activity = {
@@ -15,8 +16,15 @@ const initialForm : Activity = {
     calories: 0,
 }
 
-function Form({dispatch}: FormProps) {
+function Form({dispatch, state}: FormProps) {
   const [activity, setActivity] = useState<Activity>(initialForm);
+
+  useEffect(() => {
+    if(state.activeId) {
+      const selectedActivity = state.activities.filter(stateActivity => stateActivity.id === state.activeId)[0]
+      setActivity(selectedActivity)
+    }
+  }, [state.activeId, state.activities])
 
   // Tipamos el event e para el select y para el input
   const handleChange = (
@@ -25,7 +33,6 @@ function Form({dispatch}: FormProps) {
       | React.ChangeEvent<HTMLInputElement>
   ) => {
     const isNumberField = ["category", "calories"].includes(e.target.id);
-    console.log(isNumberField);
 
     setActivity({
       // Copiamos nuestro State
@@ -53,6 +60,12 @@ function Form({dispatch}: FormProps) {
 
     return name.trim() !== "" && calories > 0;
   };
+
+  const placeholders: Record<number, string> = {
+    1: "Ej. Hamburguesa, ensalada, arroz...",    
+    2: "Ej. Correr, pesas, yoga..."             
+  };
+  
 
   return (
     <form
@@ -84,7 +97,7 @@ function Form({dispatch}: FormProps) {
           type="text"
           id="name"
           className=" border border-slate-300 p-2 rounded-lg"
-          placeholder="Ej. Deporte, pesas, running, comida, etc"
+          placeholder={placeholders[activity.category] || "Ej. Manzana, pizza, running, pesas..."}
           value={activity.name}
           onChange={handleChange}
         />

@@ -1,43 +1,57 @@
-import { useReducer } from "react"
-import Form from "./components/Form"
-import { activityReducer, initialState } from "./reducers/activity-reducer"
+import { useEffect, useMemo, useReducer } from "react";
+import Form from "./components/Form";
+import { activityReducer, initialState } from "./reducers/activity-reducer";
 import ActivityList from "./components/ActivityList";
-
+import CalorieTracker from './components/CalorieTracker';
 
 function App() {
+  const [state, dispatch] = useReducer(activityReducer, initialState);
 
-  const [state, dispatch] = useReducer(activityReducer, initialState)
-  console.log(state);
+  useEffect(() => {
+    localStorage.setItem("activities", JSON.stringify(state.activities));
+  }, [state.activities]);
+
+  const hasActivities = useMemo(() => state.activities.length, [state.activities]);
+  const restartApp = () => {
+    dispatch({type: 'restart-app'})
+  }
 
   return (
     <>
-    <header className=" bg-lime-600 py-3">
-      <div className=" max-w-4xl mx-auto flex justify-between">
-        <h1 className=" text-center text-lg uppercase font-bold text-white">Contador de calorias</h1>
-        <button className="">
+      <header className=" bg-lime-600 py-3">
+        <div className=" max-w-4xl mx-auto flex justify-between items-center">
+          <h1 className=" text-center text-lg uppercase font-bold text-white">
+            Contador de calorias
+          </h1>
+          <button 
+            className=" bg-gray-800 hover:bg-gray-900 uppercase font-bold cursor-pointer rounded-lg p-2 text-white disabled:opacity-10"
+            disabled={!hasActivities}
+            onClick={restartApp}
+          >
+            Reiniciar App
+          </button>
+        </div>
+      </header>
 
-        </button>
-      </div>
-    </header>
+      <section className=" bg-lime-500 py-20 px-5">
+        <div className=" max-w-4xl mx-auto">
+          <Form dispatch={dispatch} state={state} />
+        </div>
+      </section>
+      
+      <section className=" bg-gray-800 py-10">
+        <div className=" max-w-4xl mx-auto">
+          <CalorieTracker 
+            activities={state.activities}
+          />
+        </div>
+      </section>
 
-    <section className=" bg-lime-500 py-20 px-5">
-      <div className=" max-w-4xl mx-auto">
-        <Form 
-          dispatch={dispatch}
-          
-        />
-      </div>
-    </section>
-
-    <section className=" p-10 mx-auto max-w-4xl">
-      <ActivityList 
-        activities={state.activities}
-        dispatch={dispatch}
-      />
-
-    </section>
+      <section className=" p-10 mx-auto max-w-4xl">
+        <ActivityList activities={state.activities} dispatch={dispatch} />
+      </section>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
