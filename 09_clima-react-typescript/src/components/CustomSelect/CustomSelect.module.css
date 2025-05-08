@@ -1,0 +1,54 @@
+.selectContainer {
+    position: relative;
+    width: 100%;
+    font-size: 1.8rem;
+    color: var(--white);
+  }
+  
+  .selected {
+    padding: 1rem;
+    border: 0.3rem solid var(--white);
+    border-radius: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .selected:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0.5rem var(--primary);
+  }
+  
+  .arrow {
+    margin-left: 1rem;
+  }
+  
+  .optionsList {
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: rgba(255, 255, 255, 0.01);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 0.2rem solid var(--white);
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+    z-index: 1000;
+    max-height: 20rem;
+    overflow-y: auto;
+  }
+  
+  .option {
+    padding: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .option:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
